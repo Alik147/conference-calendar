@@ -28,7 +28,8 @@ def get_html(url,links_flag):
 	finally:
 		reqHtml = driver.page_source
 		if links_flag:
-			links=[]
+			links = []
+			google_calendar = []
 			# closeCookie = driver.find_element_by_class_name("cc-compliance")
 			# closeCookie.click()
 			elements = driver.find_elements_by_class_name("fa-share-square")
@@ -45,6 +46,7 @@ def get_html(url,links_flag):
 				close = driver.find_elements_by_class_name("close")
 				close[0].click()
 				time.sleep(0.33)
+				
 			driver.quit()
 			return reqHtml,links
 		driver.quit()
@@ -70,9 +72,21 @@ def parse_items_content(pages):
 		items = soup.find_all('div',class_='conference-item')
 		for item in items :
 			counter+=1
-			cursor.execute("INSERT into conferences (id, date, location, title, link) values (%s, %s, %s ,%s, %s)",(
+			if (item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[1]!='-' and item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[2]=='-'):
+				a = 1
+				b = 5 
+				print(item.find('div',class_="item-date").get_text(strip=True).split("|")[0])
+			elif (item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[1]!='-' and item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[2]!='-'):
+				a = 1
+				b =2
+			elif (item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[1]=='-'):
+				a = 3
+				b =4
+			cursor.execute("INSERT into conferences (id, date, month, year , location, title, link) values (%s, %s, %s ,%s, %s, %s, %s)",(
 				counter, 
-				item.find('div',class_="item-date").get_text(strip=True).split("|")[0], 
+				item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[0],
+				item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[a],
+				item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[b],
 				item.find('div',class_="item-date").get_text(strip=True).split("|")[1],
 				item.find('div',class_="item-title").get_text(strip=True),
 				HOST+page_links[counter-10*page-1]))
@@ -91,4 +105,6 @@ def parse_items_content(pages):
 def parse():
 	pages = get_pages_count(URL)
 	conferences=parse_items_content(pages)
-parse()
+	
+if __name__ == '__main__':
+	parse()
