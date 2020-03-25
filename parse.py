@@ -6,9 +6,9 @@ from lxml import html
 from bs4 import BeautifulSoup
 import time
 import psycopg2
-q=input("Your query:")
+# q=input("Your query:")
 HOST = 'https://conferences.ieee.org/conferences_events/'
-URL = 'https://conferences.ieee.org/conferences_events/conferences/search?q={}&subsequent_q=&date=all&from=&to=&region=all&country=all&pos={}&sortorder=desc&sponsor=&sponsor_type=all&state=all&field_of_interest=all&sortfield=relevance&searchmode=basic'.format(q,0)
+URL = 'https://conferences.ieee.org/conferences_events/conferences/search?q=*&subsequent_q=&date=all&from=&to=&region=all&country=all&pos={}&sortorder=desc&sponsor=&sponsor_type=all&state=all&field_of_interest=all&sortfield=relevance&searchmode=basic'.format(0)
 def get_pages_count(url):
 	soup = BeautifulSoup(get_html(url,False),'html.parser')
 	pages=soup.find('ul',class_="ngx-pagination").find_all('li')
@@ -29,11 +29,10 @@ def get_html(url,links_flag):
 		reqHtml = driver.page_source
 		if links_flag:
 			links = []
-			google_calendar = []
 			# closeCookie = driver.find_element_by_class_name("cc-compliance")
 			# closeCookie.click()
 			elements = driver.find_elements_by_class_name("fa-share-square")
-			h = 0
+			h=0
 			for element in elements:
 				h+=165
 				driver.execute_script("window.scrollTo(0, {})".format(h))
@@ -46,7 +45,6 @@ def get_html(url,links_flag):
 				close = driver.find_elements_by_class_name("close")
 				close[0].click()
 				time.sleep(0.33)
-				
 			driver.quit()
 			return reqHtml,links
 		driver.quit()
@@ -66,7 +64,7 @@ def parse_items_content(pages):
 	cursor = con.cursor()
 	for page in range(0,pages):
 		print("working on {} page from {} pages".format(page+1,pages))
-		url='https://conferences.ieee.org/conferences_events/conferences/search?q={}&subsequent_q=&date=all&from=&to=&region=all&country=all&pos={}&sortorder=desc&sponsor=&sponsor_type=all&state=all&field_of_interest=all&sortfield=relevance&searchmode=basic'.format(q,page)
+		url='https://conferences.ieee.org/conferences_events/conferences/search?q=*&subsequent_q=&date=all&from=&to=&region=all&country=all&pos={}&sortorder=desc&sponsor=&sponsor_type=all&state=all&field_of_interest=all&sortfield=relevance&searchmode=basic'.format(page)
 		reqHtml,page_links=get_html(url,True)
 		soup = BeautifulSoup(reqHtml,"html.parser")
 		items = soup.find_all('div',class_='conference-item')
@@ -75,7 +73,7 @@ def parse_items_content(pages):
 			if (item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[1]!='-' and item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[2]=='-'):
 				a = 1
 				b = 5 
-				print(item.find('div',class_="item-date").get_text(strip=True).split("|")[0])
+				# print(item.find('div',class_="item-date").get_text(strip=True).split("|")[0])
 			elif (item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[1]!='-' and item.find('div',class_="item-date").get_text(strip=True).split("|")[0].split(" ")[2]!='-'):
 				a = 1
 				b =2
