@@ -2,7 +2,7 @@ import telebot
 import psycopg2
 import clear
 import parse
-bot = telebot.TeleBot('890467682:AAGcDbpPbIEAPUUYFFda7CVHG03VRGycUCw')
+bot = telebot.TeleBot('')
 titlewords = []
 location = ''
 @bot.message_handler(content_types=['text'])
@@ -53,28 +53,4 @@ def by_month(message):
 	con.close()
 	question = bot.send_message(message.chat.id,'Again? Y/N')
 	bot.register_next_step_handler(question, echo);
-
-		# elif message.text.lower().split(' ')[0] =='month':
-	# 	con = psycopg2.connect(
-	# 		host = "127.0.0.1",
-	# 		dbname = "postgres",
-	# 		user = "postgres",
-	# 		password = "postgres"
-	# 		)
-	# 	cursor = con.cursor()
-	# 	cursor.execute('SELECT * from conferences WHERE month = \'{}\' and year = \'{}\''.format(message.text.split(' ')[1],message.text.split(' ')[2]))
-	# 	conferences = cursor.fetchall()
-	# 	# output
-	# 	for conference in conferences:
-	# 		bot.send_message(message.chat.id, 'title: {}\n location: {}\n date: {}\n link:{}\n'.format(
-	# 			conference[3],
-	# 			conference[2],
-	# 			conference[1]+' '+conference[5]+' '+conference[6],
-	# 			conference[4]
-	# 			))
-	# 	# 
-	# 	con.commit()
-	# 	cursor.close()
-	# 	con.close()
-	
 bot.polling()
