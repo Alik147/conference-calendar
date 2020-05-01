@@ -8,7 +8,7 @@ location = ''
 @bot.message_handler(content_types=['text'])
 def echo(message):
 	if (message.text.lower()=='/start' or message.text.lower()=='y'):
-		bot.send_message(message.chat.id, 'Bot can give you conferences by your preferences, if you dont want to use this filter input %%')
+		bot.send_message(message.chat.id, 'Bot can give you conferences by your preferences, if you dont want to use this filter input \%\%')
 		question = bot.send_message(message.chat.id,'Input word(s) thats should be in title')
 		bot.register_next_step_handler(question, by_title);
 	elif message.text.lower().split(' ')[0] =='refresh':
